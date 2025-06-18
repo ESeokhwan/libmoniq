@@ -22,7 +22,7 @@ private:
     std::vector<int> pre_generated_indices_;
     int cur_idx_;
 
-    void init(int pre_indices_size);
+    void init_(int pre_indices_size);
 };
 
 }
