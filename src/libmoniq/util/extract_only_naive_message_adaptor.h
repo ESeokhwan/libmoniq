@@ -10,10 +10,10 @@ namespace util {
 
 class ExtractOnlyNaiveMessageAdaptor : public NaiveMessageAdaptor {
 public:
-    explicit ExtractOnlyNaiveMessageAdaptor(int message_size);
+    explicit ExtractOnlyNaiveMessageAdaptor() {}
 
 protected:
-    std::string get_random_padding(int size) {
+    std::string get_random_padding_(std::string message_id) override {
         throw std::runtime_error("This class is not for generating message. It is just for extracting message.");
     }
 };

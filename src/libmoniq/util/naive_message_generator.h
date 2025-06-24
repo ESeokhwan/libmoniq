@@ -15,10 +15,12 @@ public:
     ~NaiveMessageGenerator() = default;
 
 protected:
-    std::string get_random_padding_(int size) override;
+    std::string get_random_padding_(std::string message_id) override;
 
 private:
     static const std::string padding_characters;
+
+    int message_size_;
     std::vector<int> pre_generated_indices_;
     int cur_idx_;
 

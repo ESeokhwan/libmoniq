@@ -12,7 +12,7 @@ const std::string NaiveMessageGenerator::padding_characters =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
 NaiveMessageGenerator::NaiveMessageGenerator(int message_size, int pre_indices_size)
-    : NaiveMessageAdaptor(message_size), cur_idx_(0) {
+    : NaiveMessageAdaptor(), message_size_(message_size), cur_idx_(0) {
     init_(pre_indices_size);
 }
 
@@ -28,9 +28,10 @@ void NaiveMessageGenerator::init_(int pre_indices_size) {
     }
 }
 
-std::string NaiveMessageGenerator::get_random_padding_(int size) {
+std::string NaiveMessageGenerator::get_random_padding_(std::string message_id) {
+    int padding_size = message_size_ - static_cast<int>(message_id.length()) - 1;
     std::ostringstream padded_string;
-    for (int i = 0; i < size; i++) {
+    for (int i = 0; i < padding_size; i++) {
         int pre_generated_size = static_cast<int>(pre_generated_indices_.size());
         if (cur_idx_ >= pre_generated_size * MAX_CUR_IDX_MULTIPLIER) {
             cur_idx_ = 0;

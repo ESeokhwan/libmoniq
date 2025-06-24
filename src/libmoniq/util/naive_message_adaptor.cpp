@@ -4,8 +4,7 @@ namespace monitor {
 namespace util {
 
 std::string NaiveMessageAdaptor::generate(std::string message_id) {
-    int padding_size = message_size_ - static_cast<int>(message_id.length()) - 1;
-    std::string padding = get_random_padding_(padding_size);
+    std::string padding = get_random_padding_(message_id);
     return message_id + div_char_ + padding;
 }
 
