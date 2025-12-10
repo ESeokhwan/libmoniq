@@ -1,0 +1,69 @@
+#include "libmoniq/util/message_adaptor.h"
+#include "libmoniq/exception/common_exceptions.h"
+
+#include <vector>
+
+namespace monitor {
+namespace util {
+
+class ILatencyMonitoringMessageAdaptor: public IMessageAdaptor {
+public:
+    using IMessageAdaptor::generate;
+
+    virtual std::string generate(std::string messageId, double requested_at) = 0;
+
+    virtual double extract_requested_at(const std::string& message) const = 0;
+};
+
+
+class JsonBasedLatencyMonitoringMessageAdaptor: public ILatencyMonitoringMessageAdaptor {
+protected:
+    static constexpr std::string_view ID_KEY_ = "id";
+    static constexpr std::string_view REQUESTED_AT_KEY = "requested_at";
+    static constexpr std::string_view PAYLOAD_KEY_ = "payload";
+
+    virtual std::string get_random_payload() = 0;
+
+public:
+    std::string generate(std::string message_id) override;
+
+    std::string generate(std::string messageId, double requested_at) override;
+
+    std::string extract_message_id(const std::string& message) override;
+
+    double extract_requested_at(const std::string& message) const override;
+};
+
+
+class ExtractOnlyJsonBasedLatencyMonitoringMessageAdaptor: public JsonBasedLatencyMonitoringMessageAdaptor {
+public:
+    explicit ExtractOnlyJsonBasedLatencyMonitoringMessageAdaptor() {}
+
+protected:
+    std::string get_random_payload() override {
+        throw ImproperUsageException();
+    }
+};
+
+
+class JsonBasedLatencyMonitoringMessageGenerator: public JsonBasedLatencyMonitoringMessageAdaptor {
+public:
+    JsonBasedLatencyMonitoringMessageGenerator(int payload_size, int pre_indices_size);
+
+    ~JsonBasedLatencyMonitoringMessageGenerator() = default;
+
+protected:
+    std::string get_random_payload();
+
+private:
+    static const std::string payload_characters;
+
+    int payload_size_;
+    std::vector<int> pre_generated_indices_;
+    int cur_idx_;
+
+    void init_(int pre_indices_size);
+};
+
+}
+}
