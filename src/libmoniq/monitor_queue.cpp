@@ -5,7 +5,7 @@ namespace monitor {
 MonitorQueue::MonitorQueue() = default;
 
 
-bool MonitorQueue::enqueue(std::unique_ptr<MonitorLog> log) {
+bool MonitorQueue::enqueue(std::unique_ptr<IMonitorLog> log) {
     std::lock_guard<std::mutex> lock(mutex_);
     queue_.push(std::move(log));
     size_.fetch_add(1, std::memory_order_relaxed);
@@ -13,7 +13,7 @@ bool MonitorQueue::enqueue(std::unique_ptr<MonitorLog> log) {
 }
 
 
-std::unique_ptr<MonitorLog> MonitorQueue::dequeue() {
+std::unique_ptr<IMonitorLog> MonitorQueue::dequeue() {
     std::lock_guard<std::mutex> lock(mutex_);
     if (queue_.empty()) {
         return nullptr;

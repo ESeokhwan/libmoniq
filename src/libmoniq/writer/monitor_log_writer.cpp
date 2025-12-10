@@ -41,8 +41,9 @@ void MonitorLogWriter::run() {
         if (!terminated_.load(std::memory_order_relaxed) && monitor_queue_.is_empty()) {
             synced_wait();
         }
-        std::unique_ptr<MonitorLog> log_qp = monitor_queue_.dequeue();
+        std::unique_ptr<IMonitorLog> log_qp = monitor_queue_.dequeue();
         if (log_qp != nullptr) {
+            log_qp->preprocess();
             write_strategy_.write(std::move(log_qp));
             curWrittenCnt_ += 1;
         }

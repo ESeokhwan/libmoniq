@@ -1,76 +1,59 @@
 #pragma once
 
 #include <string>
+#include <vector>
 
 namespace monitor {
 
-enum class RequestType {
-    PRODUCE,
-    CONSUME
+class IMonitorLog {
+public:
+    virtual std::vector<std::string> get_headers() const = 0;
+    virtual std::vector<std::string> get_values() const = 0;
+    virtual void preprocess() = 0;
+
+    virtual ~IMonitorLog() = default;
 };
 
-inline std::string get_request_type_string(RequestType type) {
-    switch (type) {
-        case RequestType::PRODUCE:
-            return "PRODUCE";
-        case RequestType::CONSUME:
-            return "CONSUME";
-        default:
-            return "UNKNOWN";
-    }
-}
 
-enum class State {
-    REQUESTED,
-    RESPONDED
-};
-
-inline std::string get_request_state_string(State state) {
-    switch (state) {
-        case State::REQUESTED:
-            return "REQUESTED";
-        case State::RESPONDED:
-            return "RESPONDED";
-        default:
-            return "UNKNOWN";
-    }
-}
-
-class MonitorLog {
+class MonitorLog: public IMonitorLog {
 private:
-    RequestType type_;
-    std::string id_;
-    State state_;
-    int64_t timestamp_;
-    int64_t timestamp_nano_;
+    std::string content_;
+    std::string state_;
+    double timestamp_;
 
 public:
-    MonitorLog(RequestType type, const std::string& id, State state, int64_t timestamp, int64_t timestamp_nano): type_(type), id_(id), state_(state), timestamp_(timestamp), timestamp_nano_(timestamp_nano) {}
+    MonitorLog(std::string content, std::string state, double timestamp): content_(content), state_(state), timestamp_(timestamp) {}
 
-    RequestType get_type() const {
-        return type_;
+    std::vector<std::string> get_headers() const override {
+        return {
+            "Content",
+            "State",
+            "Timestamp"
+        };
     }
 
-    std::string get_id() const {
-        return id_;
+    std::vector<std::string> get_values() const override {
+        return { content_, state_, std::to_string(timestamp_) };
     }
 
-    State get_state() const {
+    void preprocess() override {}
+
+    virtual std::string get_content() const {
+        return content_;
+    }
+
+    virtual std::string get_state() const {
         return state_;
     }
 
-    int64_t get_timestamp() const {
+    virtual double get_timestamp() const {
         return timestamp_;
     }
 
-    int64_t get_timestamp_nano() const {
-        return timestamp_nano_;
-    }
-
     bool equals(const MonitorLog& other) const {
-        return type_ == other.type_ &&
-            id_ == other.id_ &&
+        return content_ == other.content_ &&
             state_ == other.state_;
     }
 };
+
 }

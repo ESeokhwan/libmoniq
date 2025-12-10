@@ -12,23 +12,14 @@ namespace writer {
 
 class ConsoleMonitorLogWriteStrategy : public IMonitorLogWriteStrategy {
 private:
-    util::IMessageAdaptor& message_adaptor_;
     bool scrapable_;
-    bool need_prettier_;
-    bool need_timestamp_nano_;
-
-    std::string prettier_timestamp(int64_t timestamp);
-    std::string prettier_timestamp_nano(int64_t timestamp);
 
 public:
-    ConsoleMonitorLogWriteStrategy(util::IMessageAdaptor& message_adaptor, 
-                                   bool scrapable,
-                                   bool need_prettier,
-                                   bool need_timestamp_nano);
+    ConsoleMonitorLogWriteStrategy(bool scrapable);
 
     ~ConsoleMonitorLogWriteStrategy() = default;
 
-    void write(std::unique_ptr<MonitorLog> log_pq);
+    void write(std::unique_ptr<IMonitorLog> log_pq);
 
     bool commit();
 };

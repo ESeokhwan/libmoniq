@@ -11,15 +11,15 @@ namespace monitor {
 
 class MonitorQueue {
 private:
-    std::queue<std::unique_ptr<MonitorLog>> queue_;
+    std::queue<std::unique_ptr<IMonitorLog>> queue_;
     mutable std::mutex mutex_;
     std::atomic<int> size_{0};
 
 public:
     MonitorQueue();
 
-    bool enqueue(std::unique_ptr<MonitorLog> log);
-    std::unique_ptr<MonitorLog> dequeue();
+    bool enqueue(std::unique_ptr<IMonitorLog> log);
+    std::unique_ptr<IMonitorLog> dequeue();
 
     int size() const;
     bool is_empty() const;
