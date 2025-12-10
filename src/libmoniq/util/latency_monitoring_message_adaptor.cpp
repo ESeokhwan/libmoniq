@@ -6,7 +6,7 @@
 
 using json = nlohmann::json;
 
-namespace monitor {
+namespace moniq {
 namespace util {
 
 std::string JsonBasedLatencyMonitoringMessageAdaptor::generate(std::string messageId) {

@@ -1,6 +1,6 @@
 #include "libmoniq/monitor_queue.h"
 
-namespace monitor {
+namespace moniq {
 
 MonitorQueue::MonitorQueue() = default;
 

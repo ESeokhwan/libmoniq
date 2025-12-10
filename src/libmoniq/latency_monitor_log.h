@@ -4,7 +4,7 @@
 
 #include <optional>
 
-namespace monitor {
+namespace moniq {
 
 class ILatencyMonitorLog: public IMonitorLog {
 public:

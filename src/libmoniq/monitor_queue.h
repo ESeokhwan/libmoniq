@@ -7,7 +7,7 @@
 #include <atomic>
 #include <memory>
 
-namespace monitor {
+namespace moniq {
 
 class MonitorQueue {
 private:

@@ -4,7 +4,7 @@
 #include <iomanip>
 #include <sstream>
 
-namespace monitor {
+namespace moniq {
 namespace writer {
 
 ConsoleMonitorLogWriteStrategy::ConsoleMonitorLogWriteStrategy(bool scrapable): scrapable_(scrapable) { }

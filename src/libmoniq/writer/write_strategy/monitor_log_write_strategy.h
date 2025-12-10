@@ -4,7 +4,7 @@
 
 #include <memory>
 
-namespace monitor {
+namespace moniq {
 namespace writer {
 
 class IMonitorLogWriteStrategy {

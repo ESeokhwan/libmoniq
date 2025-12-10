@@ -3,7 +3,7 @@
 #include <random>
 #include <sstream>
 
-namespace monitor {
+namespace moniq {
 namespace util {
 
 const int MAX_CUR_IDX_MULTIPLIER = 10;

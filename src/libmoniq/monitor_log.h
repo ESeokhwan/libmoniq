@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 
-namespace monitor {
+namespace moniq {
 
 class IMonitorLog {
 public:

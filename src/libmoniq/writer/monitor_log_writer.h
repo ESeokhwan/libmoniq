@@ -9,7 +9,7 @@
 #include <condition_variable>
 #include <mutex>
 
-namespace monitor {
+namespace moniq {
 namespace writer {
 
 class MonitorLogWriter {

@@ -4,7 +4,7 @@
 
 #include <string>
 
-namespace monitor {
+namespace moniq {
 namespace util {
 
 class NaiveMessageAdaptor : public IMessageAdaptor {

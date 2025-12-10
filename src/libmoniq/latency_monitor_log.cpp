@@ -2,7 +2,7 @@
 #include "libmoniq/exception/common_exceptions.h"
 #include "libmoniq/util/latency_monitoring_message_adaptor.h"
 
-namespace monitor {
+namespace moniq {
 
 JsonBasedLatencyMonitorLog::JsonBasedLatencyMonitorLog(
     const std::string& raw_data, const std::string& status, double responded_at

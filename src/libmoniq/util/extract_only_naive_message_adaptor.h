@@ -5,7 +5,7 @@
 #include <stdexcept>
 #include <string>
 
-namespace monitor {
+namespace moniq {
 namespace util {
 
 class ExtractOnlyNaiveMessageAdaptor : public NaiveMessageAdaptor {

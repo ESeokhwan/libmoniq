@@ -2,7 +2,7 @@
 
 #include <stdexcept>
 
-namespace monitor {
+namespace moniq {
 
 class MoniqException: public std::exception {
 private:

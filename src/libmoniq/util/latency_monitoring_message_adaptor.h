@@ -3,7 +3,7 @@
 
 #include <vector>
 
-namespace monitor {
+namespace moniq {
 namespace util {
 
 class ILatencyMonitoringMessageAdaptor: public IMessageAdaptor {

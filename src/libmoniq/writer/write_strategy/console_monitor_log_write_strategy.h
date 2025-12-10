@@ -7,7 +7,7 @@
 #include <memory>
 #include <string>
 
-namespace monitor {
+namespace moniq {
 namespace writer {
 
 class ConsoleMonitorLogWriteStrategy : public IMonitorLogWriteStrategy {

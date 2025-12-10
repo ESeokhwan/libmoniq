@@ -5,7 +5,7 @@
 #include <vector>
 #include <string>
 
-namespace monitor {
+namespace moniq {
 namespace util {
 
 class NaiveMessageGenerator : public NaiveMessageAdaptor {

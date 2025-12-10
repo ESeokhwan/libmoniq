@@ -2,7 +2,7 @@
 
 #include <thread>
 
-namespace monitor {
+namespace moniq {
 namespace writer {
 
 MonitorLogWriter::MonitorLogWriter(

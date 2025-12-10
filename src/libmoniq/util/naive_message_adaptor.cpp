@@ -1,6 +1,6 @@
 #include "libmoniq/util/naive_message_adaptor.h"
 
-namespace monitor {
+namespace moniq {
 namespace util {
 
 std::string NaiveMessageAdaptor::generate(std::string message_id) {
