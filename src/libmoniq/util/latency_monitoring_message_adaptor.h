@@ -1,5 +1,7 @@
-#include "libmoniq/util/message_adaptor.h"
+#pragma once
+
 #include "libmoniq/exception/common_exceptions.h"
+#include "libmoniq/util/message_adaptor.h"
 
 #include <vector>
 
@@ -29,7 +31,7 @@ public:
 
     std::string generate(std::string messageId, double requested_at) override;
 
-    std::string extract_message_id(const std::string& message) override;
+    std::string extract_content(const std::string& message) const override;
 
     double extract_requested_at(const std::string& message) const override;
 };
@@ -56,7 +58,8 @@ protected:
     std::string get_random_payload();
 
 private:
-    static const std::string payload_characters;
+    static constexpr std::string_view PAYLOAD_CHARACTERS_ = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    static constexpr int MAX_CUR_IDX_MULTIPLIER_ = 10;
 
     int payload_size_;
     std::vector<int> pre_generated_indices_;

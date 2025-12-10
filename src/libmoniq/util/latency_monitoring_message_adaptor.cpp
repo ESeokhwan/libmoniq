@@ -25,7 +25,7 @@ std::string JsonBasedLatencyMonitoringMessageAdaptor::generate(std::string messa
     return messageJson.dump();
 }
 
-std::string JsonBasedLatencyMonitoringMessageAdaptor::extract_message_id(const std::string& message) {
+std::string JsonBasedLatencyMonitoringMessageAdaptor::extract_content(const std::string& message) const {
     try {
         json messageJson = json::parse(message);
         if (messageJson.contains(ID_KEY_)) return messageJson[ID_KEY_];
@@ -48,11 +48,6 @@ double JsonBasedLatencyMonitoringMessageAdaptor::extract_requested_at(const std:
     return -1;
 }
 
-const int MAX_CUR_IDX_MULTIPLIER = 10;
-
-const std::string JsonBasedLatencyMonitoringMessageGenerator::payload_characters =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-
 JsonBasedLatencyMonitoringMessageGenerator::JsonBasedLatencyMonitoringMessageGenerator(int payload_size, int pre_indices_size)
     : JsonBasedLatencyMonitoringMessageAdaptor(), payload_size_(payload_size), cur_idx_(0) {
     init_(pre_indices_size);
@@ -61,7 +56,7 @@ JsonBasedLatencyMonitoringMessageGenerator::JsonBasedLatencyMonitoringMessageGen
 void JsonBasedLatencyMonitoringMessageGenerator::init_(int pre_indices_size) {
     std::random_device rd;
     std::mt19937 gen(rd());
-    std::uniform_int_distribution<> dist(0, static_cast<int>(payload_characters.size()) - 1);
+    std::uniform_int_distribution<> dist(0, static_cast<int>(PAYLOAD_CHARACTERS_.size()) - 1);
 
     pre_generated_indices_.resize(pre_indices_size);
     cur_idx_ = 0;
@@ -74,10 +69,10 @@ std::string JsonBasedLatencyMonitoringMessageGenerator::get_random_payload() {
     std::ostringstream payload;
     for (int i = 0; i < payload_size_; i++) {
         int pre_generated_size = static_cast<int>(pre_generated_indices_.size());
-        if (cur_idx_ >= pre_generated_size * MAX_CUR_IDX_MULTIPLIER) {
+        if (cur_idx_ >= pre_generated_size * MAX_CUR_IDX_MULTIPLIER_) {
             cur_idx_ = 0;
         }
-        char random_char = payload_characters[pre_generated_indices_[cur_idx_ % pre_generated_size]];
+        char random_char = PAYLOAD_CHARACTERS_[pre_generated_indices_[cur_idx_ % pre_generated_size]];
         payload << random_char;
         cur_idx_ += 1;
     }
