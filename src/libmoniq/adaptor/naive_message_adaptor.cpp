@@ -1,10 +1,10 @@
-#include "libmoniq/util/naive_message_adaptor.h"
+#include "libmoniq/adaptor/naive_message_adaptor.h"
 
 #include <random>
 #include <sstream>
 
 namespace moniq {
-namespace util {
+namespace adaptor {
 
 std::string NaiveMessageAdaptor::generate(std::string content) {
     std::string padding = get_random_padding_(content);

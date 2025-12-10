@@ -1,12 +1,12 @@
 #pragma once
 
 #include "libmoniq/exception/common_exceptions.h"
-#include "libmoniq/util/message_adaptor.h"
+#include "libmoniq/adaptor/message_adaptor.h"
 
 #include <vector>
 
 namespace moniq {
-namespace util {
+namespace adaptor {
 
 class ILatencyMonitoringMessageAdaptor: public IMessageAdaptor {
 public:

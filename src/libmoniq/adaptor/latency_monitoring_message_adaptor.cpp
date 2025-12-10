@@ -1,4 +1,4 @@
-#include "libmoniq/util/latency_monitoring_message_adaptor.h"
+#include "libmoniq/adaptor/latency_monitoring_message_adaptor.h"
 #include "libmoniq/include/json.hpp"
 
 #include <chrono>
@@ -7,7 +7,7 @@
 using json = nlohmann::json;
 
 namespace moniq {
-namespace util {
+namespace adaptor {
 
 std::string JsonBasedLatencyMonitoringMessageAdaptor::generate(std::string messageId) {
     auto now = std::chrono::system_clock::now();

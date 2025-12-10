@@ -1,13 +1,13 @@
 #pragma once
 
 #include "libmoniq/exception/common_exceptions.h"
-#include "libmoniq/util/message_adaptor.h"
+#include "libmoniq/adaptor/message_adaptor.h"
 
 #include <string>
 #include <vector>
 
 namespace moniq {
-namespace util {
+namespace adaptor {
 
 class NaiveMessageAdaptor : public IMessageAdaptor {
 protected:

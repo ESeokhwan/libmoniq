@@ -3,7 +3,7 @@
 #include <string>
 
 namespace moniq {
-namespace util {
+namespace adaptor {
 
 class IMessageAdaptor {
 public:

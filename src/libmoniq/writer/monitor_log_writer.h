@@ -3,7 +3,6 @@
 #include "libmoniq/monitor_log.h"
 #include "libmoniq/monitor_queue.h"
 #include "libmoniq/writer/write_strategy/monitor_log_write_strategy.h"
-#include "libmoniq/util/message_adaptor.h"
 
 #include <atomic>
 #include <condition_variable>

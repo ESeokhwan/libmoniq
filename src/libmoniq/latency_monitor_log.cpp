@@ -1,6 +1,6 @@
 #include "libmoniq/latency_monitor_log.h"
 #include "libmoniq/exception/common_exceptions.h"
-#include "libmoniq/util/latency_monitoring_message_adaptor.h"
+#include "libmoniq/adaptor/latency_monitoring_message_adaptor.h"
 
 namespace moniq {
 
@@ -25,7 +25,7 @@ std::vector<std::string> JsonBasedLatencyMonitorLog::get_values() const {
 }
 
 void JsonBasedLatencyMonitorLog::preprocess() {
-    util::ExtractOnlyJsonBasedLatencyMonitoringMessageAdaptor message_adaptor;
+    adaptor::ExtractOnlyJsonBasedLatencyMonitoringMessageAdaptor message_adaptor;
     extracted_content_ = message_adaptor.extract_content(raw_data_);
     extracted_requested_at_ = message_adaptor.extract_requested_at(raw_data_);
 }
