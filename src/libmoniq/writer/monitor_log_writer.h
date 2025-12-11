@@ -25,8 +25,6 @@ public:
 private:
     void synced_wait();
     void synced_notify();
-    void try_flush_batch();
-    void flush_batch();
 
     MonitorQueue& monitor_queue_;
     IMonitorLogWriteStrategy& write_strategy_;

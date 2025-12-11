@@ -38,32 +38,15 @@ void MonitorLogWriter::notify_if_needed() {
 
 void MonitorLogWriter::run() {
     while (!(terminated_.load(std::memory_order_relaxed) && monitor_queue_.is_empty())) {
-        if (!terminated_.load(std::memory_order_relaxed) && monitor_queue_.is_empty()) {
-            synced_wait();
-        }
-        std::unique_ptr<IMonitorLog> log_qp = monitor_queue_.dequeue();
-        if (log_qp != nullptr) {
+        synced_wait();
+        for (int i = 0; i < batch_size_; i++) {
+            std::unique_ptr<IMonitorLog> log_qp = monitor_queue_.dequeue();
+            if (log_qp == nullptr) break;
             log_qp->preprocess();
             write_strategy_.write(std::move(log_qp));
-            curWrittenCnt_ += 1;
         }
-        try_flush_batch();
+        write_strategy_.commit();
     }
-    flush_batch();
-}
-
-void MonitorLogWriter::try_flush_batch() {
-    if (curWrittenCnt_ >= batch_size_) {
-        flush_batch();
-        if (!terminated_.load(std::memory_order_relaxed) && monitor_queue_.size() < batch_size_) {
-            synced_wait();
-        }
-    }
-}
-
-void MonitorLogWriter::flush_batch() {
-    write_strategy_.commit();
-    curWrittenCnt_ = 0;
 }
 
 } // namespace writer
