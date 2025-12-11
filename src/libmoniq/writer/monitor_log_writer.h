@@ -29,6 +29,7 @@ public:
 private:
     void synced_wait();
     void synced_notify();
+    bool is_batch_full();
 
     MonitorQueue& monitor_queue_;
     IMonitorLogWriteStrategy& write_strategy_;

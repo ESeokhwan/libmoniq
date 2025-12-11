@@ -30,7 +30,7 @@ void MonitorLogWriter::run() {
 }
 
 void MonitorLogWriter::notify_if_needed() {
-    if (monitor_queue_.size() >= batch_size_ || direct_write_.load(std::memory_order_relaxed)) {
+    if (is_batch_full() || direct_write_.load(std::memory_order_relaxed)) {
         synced_notify();
     }
 }
@@ -51,7 +51,7 @@ void MonitorLogWriter::disable_direct_write() {
 
 void MonitorLogWriter::synced_wait() {
     auto predicate = [this] {
-        return monitor_queue_.size() >= batch_size_
+        return is_batch_full()
             || terminated_.load(std::memory_order_relaxed)
             || (direct_write_.load(std::memory_order_relaxed) && !monitor_queue_.is_empty());
     };
@@ -63,6 +63,11 @@ void MonitorLogWriter::synced_wait() {
 
 void MonitorLogWriter::synced_notify() {
     cv_.notify_one();
+}
+
+bool MonitorLogWriter::is_batch_full() {
+    if (batch_size_ < 0) return false; // when batch size is less than zero, it is considered as infinite.
+    return monitor_queue_.size() >= batch_size_;
 }
 
 } // namespace writer
