@@ -33,6 +33,8 @@ public:
     std::vector<std::string> get_values() const override;
     void preprocess() override;
 
+    std::string get_raw_data() const { return raw_data_; }
+    std::string get_status() const { return status_; }
     std::string get_content() const override;
     double get_requested_at() const override;
     double get_responded_at() const override;
