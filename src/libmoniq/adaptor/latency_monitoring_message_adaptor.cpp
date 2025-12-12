@@ -25,6 +25,18 @@ std::string JsonBasedLatencyMonitoringMessageAdaptor::generate(std::string messa
     return messageJson.dump();
 }
 
+std::string JsonBasedLatencyMonitoringMessageAdaptor::generate(std::string messageId, double requested_at, std::map<std::string, std::string> oth_kvs) {
+    json messageJson = {
+        {ID_KEY_, messageId},
+        {REQUESTED_AT_KEY, requested_at},
+        {PAYLOAD_KEY_, get_random_payload()}
+    };
+    for (const auto& [key, value] : oth_kvs) {
+        messageJson[key] = value;
+    }
+    return messageJson.dump();
+}
+
 std::string JsonBasedLatencyMonitoringMessageAdaptor::extract_content(const std::string& message) const {
     try {
         json messageJson = json::parse(message);
@@ -46,6 +58,16 @@ double JsonBasedLatencyMonitoringMessageAdaptor::extract_requested_at(const std:
         return -1;
     }
     return -1;
+}
+
+std::string JsonBasedLatencyMonitoringMessageAdaptor::extract_other_kvs(const std::string& message, const std::string& key) const {
+    try {
+        json messageJson = json::parse(message);
+        if (messageJson.contains(key)) return messageJson[key];
+    } catch (...) {
+        return "";
+    }
+    return "";
 }
 
 JsonBasedLatencyMonitoringMessageGenerator::JsonBasedLatencyMonitoringMessageGenerator(int payload_size, int pre_indices_size)

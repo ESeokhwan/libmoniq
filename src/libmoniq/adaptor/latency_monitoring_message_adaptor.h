@@ -4,6 +4,7 @@
 #include "libmoniq/adaptor/message_adaptor.h"
 
 #include <vector>
+#include <map>
 
 namespace moniq {
 namespace adaptor {
@@ -31,9 +32,13 @@ public:
 
     std::string generate(std::string messageId, double requested_at) override;
 
+    virtual std::string generate(std::string messageId, double requested_at, std::map<std::string, std::string> oth_kvs);
+
     std::string extract_content(const std::string& message) const override;
 
     double extract_requested_at(const std::string& message) const override;
+
+    virtual std::string extract_other_kvs(const std::string& message, const std::string& key) const;
 };
 
 
