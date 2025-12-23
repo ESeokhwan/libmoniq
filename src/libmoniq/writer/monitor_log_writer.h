@@ -23,8 +23,6 @@ public:
     void run();
     void notify_if_needed();
     void graceful_shutdown();
-    void enable_direct_write();
-    void disable_direct_write();
 
 private:
     void synced_wait();
@@ -37,7 +35,6 @@ private:
     int timeout_;
 
     std::atomic<bool> terminated_{false};
-    std::atomic<bool> direct_write_{false};
 
     std::mutex mtx_;
     std::condition_variable cv_;

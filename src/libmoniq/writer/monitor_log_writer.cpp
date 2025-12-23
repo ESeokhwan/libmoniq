@@ -31,7 +31,7 @@ void MonitorLogWriter::run() {
 }
 
 void MonitorLogWriter::notify_if_needed() {
-    if (is_batch_full() || direct_write_.load(std::memory_order_relaxed)) {
+    if (is_batch_full()) {
         synced_notify();
     }
 }
@@ -41,20 +41,10 @@ void MonitorLogWriter::graceful_shutdown() {
     synced_notify();
 }
 
-void MonitorLogWriter::enable_direct_write() {
-    direct_write_.store(true, std::memory_order_relaxed);
-    synced_notify();
-}
-
-void MonitorLogWriter::disable_direct_write() {
-    direct_write_.store(false, std::memory_order_relaxed);
-}
-
 void MonitorLogWriter::synced_wait() {
     auto predicate = [this] {
         return is_batch_full()
-            || terminated_.load(std::memory_order_relaxed)
-            || (direct_write_.load(std::memory_order_relaxed) && !monitor_queue_.is_empty());
+            || terminated_.load(std::memory_order_relaxed);
     };
 
     std::unique_lock<std::mutex> lock(mtx_);
