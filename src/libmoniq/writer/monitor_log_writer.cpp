@@ -19,7 +19,8 @@ MonitorLogWriter::MonitorLogWriter(
 void MonitorLogWriter::run() {
     while (!(terminated_.load(std::memory_order_relaxed) && monitor_queue_.is_empty())) {
         synced_wait();
-        for (int i = 0; i < std::max(1, batch_size_); i++) {
+        int processed_batch_size = batch_size_ < 0 ? monitor_queue_.size() : batch_size_;
+        for (int i = 0; i < processed_batch_size; i++) {
             std::unique_ptr<IMonitorLog> log_qp = monitor_queue_.dequeue();
             if (log_qp == nullptr) break;
             log_qp->preprocess();
