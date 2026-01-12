@@ -14,8 +14,8 @@ namespace writer {
 class MonitorLogWriter {
 public:
     MonitorLogWriter(
-        MonitorQueue& monitor_queue,
-        IMonitorLogWriteStrategy& write_strategy,
+        std::shared_ptr<MonitorQueue> monitor_queue,
+        std::shared_ptr<IMonitorLogWriteStrategy> write_strategy,
         int batch_size,
         int timeout
     );
@@ -29,8 +29,8 @@ private:
     void synced_notify();
     bool is_batch_full();
 
-    MonitorQueue& monitor_queue_;
-    IMonitorLogWriteStrategy& write_strategy_;
+    std::shared_ptr<MonitorQueue> monitor_queue_;
+    std::shared_ptr<IMonitorLogWriteStrategy> write_strategy_;
     int batch_size_;
     int timeout_;
 

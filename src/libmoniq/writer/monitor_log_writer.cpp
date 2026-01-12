@@ -6,8 +6,8 @@ namespace moniq {
 namespace writer {
 
 MonitorLogWriter::MonitorLogWriter(
-    MonitorQueue& monitor_queue,
-    IMonitorLogWriteStrategy& write_strategy,
+    std::shared_ptr<MonitorQueue> monitor_queue,
+    std::shared_ptr<IMonitorLogWriteStrategy> write_strategy,
     int batch_size,
     int timeout)
     : monitor_queue_(monitor_queue),
@@ -17,16 +17,16 @@ MonitorLogWriter::MonitorLogWriter(
 {}
 
 void MonitorLogWriter::run() {
-    while (!(terminated_.load(std::memory_order_relaxed) && monitor_queue_.is_empty())) {
+    while (!(terminated_.load(std::memory_order_relaxed) && monitor_queue_->is_empty())) {
         synced_wait();
-        int processed_batch_size = batch_size_ < 0 ? monitor_queue_.size() : batch_size_;
+        int processed_batch_size = batch_size_ < 0 ? monitor_queue_->size() : batch_size_;
         for (int i = 0; i < processed_batch_size; i++) {
-            std::unique_ptr<IMonitorLog> log_qp = monitor_queue_.dequeue();
+            std::unique_ptr<IMonitorLog> log_qp = monitor_queue_->dequeue();
             if (log_qp == nullptr) break;
             log_qp->preprocess();
-            write_strategy_.write(std::move(log_qp));
+            write_strategy_->write(std::move(log_qp));
         }
-        write_strategy_.commit();
+        write_strategy_->commit();
     }
 }
 
@@ -58,7 +58,7 @@ void MonitorLogWriter::synced_notify() {
 
 bool MonitorLogWriter::is_batch_full() {
     if (batch_size_ < 0) return false; // when batch size is less than zero, it is considered as infinite.
-    return monitor_queue_.size() >= batch_size_;
+    return monitor_queue_->size() >= batch_size_;
 }
 
 } // namespace writer
