@@ -1,7 +1,5 @@
 #include "libmoniq/writer/monitor_log_writer.h"
 
-#include <thread>
-
 namespace moniq {
 namespace writer {
 

@@ -4,7 +4,6 @@
 #include "libmoniq/writer/write_strategy/monitor_log_write_strategy.h"
 
 #include <memory>
-#include <string>
 
 namespace moniq {
 namespace writer {

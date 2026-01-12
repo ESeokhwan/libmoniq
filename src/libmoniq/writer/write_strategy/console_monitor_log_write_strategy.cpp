@@ -1,8 +1,6 @@
 #include "libmoniq/writer/write_strategy/console_monitor_log_write_strategy.h"
 
 #include <ctime>
-#include <iomanip>
-#include <sstream>
 
 namespace moniq {
 namespace writer {
