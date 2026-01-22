@@ -3,6 +3,7 @@
 
 #include <chrono>
 #include <random>
+#include <sstream>
 
 using json = nlohmann::json;
 
