@@ -1,6 +1,7 @@
 #pragma once
 
 #include "libmoniq/monitor_log.h"
+#include "libmoniq/adaptor/latency_monitoring_message_adaptor.h"
 
 #include <optional>
 
@@ -18,6 +19,8 @@ public:
 
 class JsonBasedLatencyMonitorLog: public ILatencyMonitorLog {
 private:
+    adaptor::ILatencyMonitoringMessageAdaptor *message_adaptor;
+
     std::string raw_data_;
     std::string status_;
     double responded_at_;
@@ -26,7 +29,7 @@ private:
     std::optional<double> extracted_requested_at_;
 
 public:
-    JsonBasedLatencyMonitorLog(const std::string& raw_data, const std::string& status, double responded_at);
+    JsonBasedLatencyMonitorLog(adaptor::ILatencyMonitoringMessageAdaptor *message_adaptor, const std::string& raw_data, const std::string& status, double responded_at);
     ~JsonBasedLatencyMonitorLog() = default;
 
     std::vector<std::string> get_headers() const override;
