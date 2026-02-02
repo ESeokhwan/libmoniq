@@ -58,14 +58,16 @@ void MonitorLogWriter::process_write(int todo_cnt) {
     int cur_processed_ = processed_.fetch_add(1, std::memory_order_relaxed);
     while (cur_processed_ < todo_cnt) {
         try {
-            std::unique_ptr<IMonitorLog> log_qp;
-            log_qp = monitor_queue_->dequeue();
+            std::unique_ptr<IMonitorLog> log_qp = monitor_queue_->dequeue();
             if (log_qp == nullptr) {
                 processed_.store(todo_cnt, std::memory_order_relaxed);
                 break;
             }
             log_qp->preprocess();
-            write_strategy_->write(std::move(log_qp));
+            {
+                std::lock_guard<std::mutex> lock(write_mtx_);
+                write_strategy_->write(std::move(log_qp));
+            }
         } catch (const std::exception& e) {}
         cur_processed_ = processed_.fetch_add(1, std::memory_order_relaxed);
     }

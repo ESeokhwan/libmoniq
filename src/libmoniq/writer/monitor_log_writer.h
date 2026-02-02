@@ -48,6 +48,8 @@ private:
 
     std::mutex mtx_;
     std::condition_variable cv_;
+
+    std::mutex write_mtx_;
 };
 
 }
