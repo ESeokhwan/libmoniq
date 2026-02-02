@@ -1,4 +1,5 @@
 #include "libmoniq/writer/monitor_log_writer.h"
+#include "libmoniq/exception/common_exceptions.h"
 #include <atomic>
 #include <memory>
 #include <thread>
@@ -11,11 +12,7 @@ MonitorLogWriter::MonitorLogWriter(
     std::shared_ptr<IMonitorLogWriteStrategy> write_strategy,
     int batch_size,
     int timeout)
-    : monitor_queue_(monitor_queue),
-      write_strategy_(write_strategy),
-      batch_size_(batch_size),
-      timeout_(timeout), 
-      worker_cnt_(1)
+    : MonitorLogWriter(monitor_queue, write_strategy, batch_size, timeout, 1)
 {}
 
 MonitorLogWriter::MonitorLogWriter(
@@ -29,7 +26,9 @@ MonitorLogWriter::MonitorLogWriter(
       batch_size_(batch_size),
       timeout_(timeout), 
       worker_cnt_(worker_cnt)
-{}
+{
+    if (batch_size < 0 && timeout <= 0) throw ImproperUsageException();
+}
 
 void MonitorLogWriter::run() {
     while (!(terminated_.load(std::memory_order_relaxed) && monitor_queue_->is_empty())) {
