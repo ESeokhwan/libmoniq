@@ -22,7 +22,7 @@ public:
 class JsonBasedLatencyMonitoringMessageAdaptor: public ILatencyMonitoringMessageAdaptor {
 protected:
     static constexpr std::string_view ID_KEY_ = "id";
-    static constexpr std::string_view REQUESTED_AT_KEY = "requested_at";
+    static constexpr std::string_view REQUESTED_AT_KEY = "timestamp";
     static constexpr std::string_view PAYLOAD_KEY_ = "payload";
 
     virtual std::string get_random_payload() = 0;
@@ -78,7 +78,7 @@ private:
 class FastJsonBasedLatencyMonitoringMessageAdaptor: public ILatencyMonitoringMessageAdaptor {
 protected:
     static constexpr std::string_view ID_KEY_ = "id";
-    static constexpr std::string_view REQUESTED_AT_KEY = "requested_at";
+    static constexpr std::string_view REQUESTED_AT_KEY = "timestamp";
     static constexpr char DIV_CHAR = '!';
 
     virtual std::string get_random_payload() = 0;
