@@ -19,10 +19,10 @@ class MonitorLog: public IMonitorLog {
 private:
     std::string content_;
     std::string state_;
-    double timestamp_;
+    int64_t timestamp_;
 
 public:
-    MonitorLog(std::string content, std::string state, double timestamp): content_(content), state_(state), timestamp_(timestamp) {}
+    MonitorLog(std::string content, std::string state, int64_t timestamp): content_(content), state_(state), timestamp_(timestamp) {}
 
     std::vector<std::string> get_headers() const override {
         return {
@@ -46,7 +46,7 @@ public:
         return state_;
     }
 
-    virtual double get_timestamp() const {
+    virtual int64_t get_timestamp() const {
         return timestamp_;
     }
 

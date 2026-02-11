@@ -12,12 +12,11 @@ namespace adaptor {
 
 std::string JsonBasedLatencyMonitoringMessageAdaptor::generate(std::string messageId) {
     auto now = std::chrono::system_clock::now();
-    auto nanosec = std::chrono::duration_cast<std::chrono::nanoseconds>(now.time_since_epoch());
-    double millsec = nanosec.count() / 1e6;
-    return generate(messageId, millsec);
+    int64_t millisec = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count();
+    return generate(messageId, millisec);
 }
 
-std::string JsonBasedLatencyMonitoringMessageAdaptor::generate(std::string messageId, double requested_at) {
+std::string JsonBasedLatencyMonitoringMessageAdaptor::generate(std::string messageId, int64_t requested_at) {
     json messageJson = {
         {ID_KEY_, messageId},
         {REQUESTED_AT_KEY, requested_at},
@@ -26,7 +25,7 @@ std::string JsonBasedLatencyMonitoringMessageAdaptor::generate(std::string messa
     return messageJson.dump();
 }
 
-std::string JsonBasedLatencyMonitoringMessageAdaptor::generate(std::string messageId, double requested_at, std::map<std::string, std::string> oth_kvs) {
+std::string JsonBasedLatencyMonitoringMessageAdaptor::generate(std::string messageId, int64_t requested_at, std::map<std::string, std::string> oth_kvs) {
     json messageJson = {
         {ID_KEY_, messageId},
         {REQUESTED_AT_KEY, requested_at},
@@ -48,7 +47,7 @@ std::string JsonBasedLatencyMonitoringMessageAdaptor::extract_content(const std:
     return "";
 }
 
-double JsonBasedLatencyMonitoringMessageAdaptor::extract_requested_at(const std::string& message) const {
+int64_t JsonBasedLatencyMonitoringMessageAdaptor::extract_requested_at(const std::string& message) const {
     try {
         json messageJson = json::parse(message);
         if (messageJson.contains(REQUESTED_AT_KEY)) {
@@ -104,12 +103,11 @@ std::string JsonBasedLatencyMonitoringMessageGenerator::get_random_payload() {
 
 std::string FastJsonBasedLatencyMonitoringMessageAdaptor::generate(std::string messageId) {
     auto now = std::chrono::system_clock::now();
-    auto nanosec = std::chrono::duration_cast<std::chrono::nanoseconds>(now.time_since_epoch());
-    double millsec = nanosec.count() / 1e6;
-    return generate(messageId, millsec);
+    int64_t millisec = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count();
+    return generate(messageId, millisec);
 }
 
-std::string FastJsonBasedLatencyMonitoringMessageAdaptor::generate(std::string messageId, double requested_at) {
+std::string FastJsonBasedLatencyMonitoringMessageAdaptor::generate(std::string messageId, int64_t requested_at) {
     json messageJson = {
         {ID_KEY_, messageId},
         {REQUESTED_AT_KEY, requested_at}
@@ -117,7 +115,7 @@ std::string FastJsonBasedLatencyMonitoringMessageAdaptor::generate(std::string m
     return messageJson.dump() + DIV_CHAR + get_random_payload();
 }
 
-std::string FastJsonBasedLatencyMonitoringMessageAdaptor::generate(std::string messageId, double requested_at, std::map<std::string, std::string> oth_kvs) {
+std::string FastJsonBasedLatencyMonitoringMessageAdaptor::generate(std::string messageId, int64_t requested_at, std::map<std::string, std::string> oth_kvs) {
     json messageJson = {
         {ID_KEY_, messageId},
         {REQUESTED_AT_KEY, requested_at}
@@ -140,7 +138,7 @@ std::string FastJsonBasedLatencyMonitoringMessageAdaptor::extract_content(const 
     return "";
 }
 
-double FastJsonBasedLatencyMonitoringMessageAdaptor::extract_requested_at(const std::string& message) const {
+int64_t FastJsonBasedLatencyMonitoringMessageAdaptor::extract_requested_at(const std::string& message) const {
     std::string payload_removed = get_payload_removed(message);
 
     try {

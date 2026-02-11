@@ -6,7 +6,7 @@ namespace moniq {
 
 JsonBasedLatencyMonitorLog::JsonBasedLatencyMonitorLog(
     adaptor::ILatencyMonitoringMessageAdaptor *message_adaptor,
-    const std::string& raw_data, const std::string& status, double responded_at
+    const std::string& raw_data, const std::string& status, int64_t responded_at
 ): message_adaptor(message_adaptor), raw_data_(raw_data), status_(status), responded_at_(responded_at),
     extracted_content_(std::nullopt), extracted_requested_at_(std::nullopt) {}
 
@@ -35,16 +35,16 @@ std::string JsonBasedLatencyMonitorLog::get_content() const {
     return extracted_content_.value();
 }
 
-double JsonBasedLatencyMonitorLog::get_requested_at() const {
+int64_t JsonBasedLatencyMonitorLog::get_requested_at() const {
     if (!extracted_requested_at_.has_value()) throw NotProcessedException();
     return extracted_requested_at_.value();
 }
 
-double JsonBasedLatencyMonitorLog::get_responded_at() const {
+int64_t JsonBasedLatencyMonitorLog::get_responded_at() const {
     return responded_at_;
 }
 
-double JsonBasedLatencyMonitorLog::get_latency() const {
+int64_t JsonBasedLatencyMonitorLog::get_latency() const {
     return responded_at_ - get_requested_at();
 }
 

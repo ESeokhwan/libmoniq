@@ -13,9 +13,9 @@ class ILatencyMonitoringMessageAdaptor: public IMessageAdaptor {
 public:
     using IMessageAdaptor::generate;
 
-    virtual std::string generate(std::string messageId, double requested_at) = 0;
+    virtual std::string generate(std::string messageId, int64_t requested_at) = 0;
 
-    virtual double extract_requested_at(const std::string& message) const = 0;
+    virtual int64_t extract_requested_at(const std::string& message) const = 0;
 };
 
 
@@ -30,13 +30,13 @@ protected:
 public:
     std::string generate(std::string message_id) override;
 
-    std::string generate(std::string messageId, double requested_at) override;
+    std::string generate(std::string messageId, int64_t requested_at) override;
 
-    virtual std::string generate(std::string messageId, double requested_at, std::map<std::string, std::string> oth_kvs);
+    virtual std::string generate(std::string messageId, int64_t requested_at, std::map<std::string, std::string> oth_kvs);
 
     std::string extract_content(const std::string& message) const override;
 
-    double extract_requested_at(const std::string& message) const override;
+    int64_t extract_requested_at(const std::string& message) const override;
 
     virtual std::string extract_other_kvs(const std::string& message, const std::string& key) const;
 };
@@ -85,13 +85,13 @@ protected:
 public:
     std::string generate(std::string message_id) override;
 
-    std::string generate(std::string messageId, double requested_at) override;
+    std::string generate(std::string messageId, int64_t requested_at) override;
 
-    virtual std::string generate(std::string messageId, double requested_at, std::map<std::string, std::string> oth_kvs);
+    virtual std::string generate(std::string messageId, int64_t requested_at, std::map<std::string, std::string> oth_kvs);
 
     std::string extract_content(const std::string& message) const override;
 
-    double extract_requested_at(const std::string& message) const override;
+    int64_t extract_requested_at(const std::string& message) const override;
 
     virtual std::string extract_other_kvs(const std::string& message, const std::string& key) const;
 };
