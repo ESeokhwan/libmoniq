@@ -16,18 +16,32 @@ std::string JsonBasedLatencyMonitoringMessageAdaptor::generate(std::string messa
 
 std::string JsonBasedLatencyMonitoringMessageAdaptor::generate(std::string messageId, std::map<std::string, std::string> oth_kvs) {
     std::string payload = get_random_payload();
-
     auto now = std::chrono::system_clock::now();
     int64_t requested_at_ms = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count();
-    json messageJson = {
-        {ID_KEY_, messageId},
-        {REQUESTED_AT_KEY, std::to_string(requested_at_ms)},
-        {PAYLOAD_KEY_, payload}
-    };
+
+    std::string json_str = "{\"";
+    json_str += ID_KEY_;
+    json_str += "\":\"";
+    json_str += messageId;
+    json_str += "\",\"";
+    json_str += REQUESTED_AT_KEY;
+    json_str += "\":\"";
+    json_str += std::to_string(requested_at_ms);
+    json_str += "\",\"";
+    json_str += PAYLOAD_KEY_;
+    json_str += "\":\"";
+    json_str += payload;
+    json_str += "\"";
+
     for (const auto& [key, value] : oth_kvs) {
-        messageJson[key] = value;
+        json_str += ",\"";
+        json_str += key;
+        json_str += "\":\"";
+        json_str += value;
+        json_str += "\"";
     }
-    return messageJson.dump();
+    json_str += "}";
+    return json_str;
 }
 
 std::string JsonBasedLatencyMonitoringMessageAdaptor::generate(std::string messageId, int64_t requested_at) {
@@ -35,15 +49,31 @@ std::string JsonBasedLatencyMonitoringMessageAdaptor::generate(std::string messa
 }
 
 std::string JsonBasedLatencyMonitoringMessageAdaptor::generate(std::string messageId, int64_t requested_at, std::map<std::string, std::string> oth_kvs) {
-    json messageJson = {
-        {ID_KEY_, messageId},
-        {REQUESTED_AT_KEY, std::to_string(requested_at)},
-        {PAYLOAD_KEY_, get_random_payload()}
-    };
+    std::string payload = get_random_payload();
+
+    std::string json_str = "{\"";
+    json_str += ID_KEY_;
+    json_str += "\":\"";
+    json_str += messageId;
+    json_str += "\",\"";
+    json_str += REQUESTED_AT_KEY;
+    json_str += "\":\"";
+    json_str += std::to_string(requested_at);
+    json_str += "\",\"";
+    json_str += PAYLOAD_KEY_;
+    json_str += "\":\"";
+    json_str += payload;
+    json_str += "\"";
+
     for (const auto& [key, value] : oth_kvs) {
-        messageJson[key] = value;
+        json_str += ",\"";
+        json_str += key;
+        json_str += "\":\"";
+        json_str += value;
+        json_str += "\"";
     }
-    return messageJson.dump();
+    json_str += "}";
+    return json_str;
 }
 
 std::string JsonBasedLatencyMonitoringMessageAdaptor::extract_content(const std::string& message) const {
@@ -115,14 +145,26 @@ std::string FastJsonBasedLatencyMonitoringMessageAdaptor::generate(std::string m
 
     auto now = std::chrono::system_clock::now();
     int64_t requested_at_ms = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count();
-    json messageJson = {
-        {ID_KEY_, messageId},
-        {REQUESTED_AT_KEY, std::to_string(requested_at_ms)}
-    };
+
+    std::string json_str = "{\"";
+    json_str += ID_KEY_;
+    json_str += "\":\"";
+    json_str += messageId;
+    json_str += "\",\"";
+    json_str += REQUESTED_AT_KEY;
+    json_str += "\":\"";
+    json_str += std::to_string(requested_at_ms);
+    json_str += "\"";
+
     for (const auto& [key, value] : oth_kvs) {
-        messageJson[key] = value;
+        json_str += ",\"";
+        json_str += key;
+        json_str += "\":\"";
+        json_str += value;
+        json_str += "\"";
     }
-    return messageJson.dump() + DIV_CHAR + payload;
+    json_str += "}";
+    return json_str + DIV_CHAR + payload;
 }
 
 std::string FastJsonBasedLatencyMonitoringMessageAdaptor::generate(std::string messageId, int64_t requested_at) {
@@ -130,14 +172,27 @@ std::string FastJsonBasedLatencyMonitoringMessageAdaptor::generate(std::string m
 }
 
 std::string FastJsonBasedLatencyMonitoringMessageAdaptor::generate(std::string messageId, int64_t requested_at, std::map<std::string, std::string> oth_kvs) {
-    json messageJson = {
-        {ID_KEY_, messageId},
-        {REQUESTED_AT_KEY, std::to_string(requested_at)}
-    };
+    std::string payload = get_random_payload();
+
+    std::string json_str = "{\"";
+    json_str += ID_KEY_;
+    json_str += "\":\"";
+    json_str += messageId;
+    json_str += "\",\"";
+    json_str += REQUESTED_AT_KEY;
+    json_str += "\":\"";
+    json_str += std::to_string(requested_at);
+    json_str += "\"";
+
     for (const auto& [key, value] : oth_kvs) {
-        messageJson[key] = value;
+        json_str += ",\"";
+        json_str += key;
+        json_str += "\":\"";
+        json_str += value;
+        json_str += "\"";
     }
-    return messageJson.dump() + DIV_CHAR + get_random_payload();
+    json_str += "}";
+    return json_str + DIV_CHAR + payload;
 }
 
 std::string FastJsonBasedLatencyMonitoringMessageAdaptor::extract_content(const std::string& message) const {
