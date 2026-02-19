@@ -3,7 +3,6 @@
 
 #include <chrono>
 #include <random>
-#include <sstream>
 #include <string>
 
 using json = nlohmann::json;
@@ -90,25 +89,21 @@ void JsonBasedLatencyMonitoringMessageGenerator::init_(int pre_indices_size) {
     std::mt19937 gen(rd());
     std::uniform_int_distribution<> dist(0, static_cast<int>(PAYLOAD_CHARACTERS_.size()) - 1);
 
-    pre_generated_indices_.resize(pre_indices_size);
-    cur_idx_ = 0;
-    for (int& idx : pre_generated_indices_) {
-        idx = dist(gen);
+    int total_pool_size = std::max(pre_indices_size, payload_size_);
+    pre_generated_payload_.reserve(total_pool_size);
+    for (int i = 0; i < total_pool_size; ++i) {
+        pre_generated_payload_ += PAYLOAD_CHARACTERS_[dist(gen)];
     }
 }
 
 std::string JsonBasedLatencyMonitoringMessageGenerator::get_random_payload() {
-    std::ostringstream payload;
-    for (int i = 0; i < payload_size_; i++) {
-        int pre_generated_size = static_cast<int>(pre_generated_indices_.size());
-        if (cur_idx_ >= pre_generated_size * MAX_CUR_IDX_MULTIPLIER_) {
-            cur_idx_ = 0;
-        }
-        char random_char = PAYLOAD_CHARACTERS_[pre_generated_indices_[cur_idx_ % pre_generated_size]];
-        payload << random_char;
-        cur_idx_ += 1;
+    int pool_size = static_cast<int>(pre_generated_payload_.size()) - payload_size_;
+    if (cur_idx_ >= pool_size) {
+        cur_idx_ = 0;
     }
-    return payload.str();
+    std::string result = pre_generated_payload_.substr(cur_idx_, payload_size_);
+    cur_idx_++;
+    return result;
 }
 
 std::string FastJsonBasedLatencyMonitoringMessageAdaptor::generate(std::string messageId) {
@@ -202,25 +197,21 @@ void FastJsonBasedLatencyMonitoringMessageGenerator::init_(int pre_indices_size)
     std::mt19937 gen(rd());
     std::uniform_int_distribution<> dist(0, static_cast<int>(PAYLOAD_CHARACTERS_.size()) - 1);
 
-    pre_generated_indices_.resize(pre_indices_size);
-    cur_idx_ = 0;
-    for (int& idx : pre_generated_indices_) {
-        idx = dist(gen);
+    int total_pool_size = std::max(pre_indices_size, payload_size_);
+    pre_generated_payload_.reserve(total_pool_size);
+    for (int i = 0; i < total_pool_size; ++i) {
+        pre_generated_payload_ += PAYLOAD_CHARACTERS_[dist(gen)];
     }
 }
 
 std::string FastJsonBasedLatencyMonitoringMessageGenerator::get_random_payload() {
-    std::ostringstream payload;
-    for (int i = 0; i < payload_size_; i++) {
-        int pre_generated_size = static_cast<int>(pre_generated_indices_.size());
-        if (cur_idx_ >= pre_generated_size * MAX_CUR_IDX_MULTIPLIER_) {
-            cur_idx_ = 0;
-        }
-        char random_char = PAYLOAD_CHARACTERS_[pre_generated_indices_[cur_idx_ % pre_generated_size]];
-        payload << random_char;
-        cur_idx_ += 1;
+    int pool_size = static_cast<int>(pre_generated_payload_.size()) - payload_size_;
+    if (cur_idx_ >= pool_size) {
+        cur_idx_ = 0;
     }
-    return payload.str();
+    std::string result = pre_generated_payload_.substr(cur_idx_, payload_size_);
+    cur_idx_++;
+    return result;
 }
 
 }

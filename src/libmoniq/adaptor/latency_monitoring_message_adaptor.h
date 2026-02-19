@@ -3,7 +3,6 @@
 #include "libmoniq/exception/common_exceptions.h"
 #include "libmoniq/adaptor/message_adaptor.h"
 
-#include <vector>
 #include <map>
 
 namespace moniq {
@@ -66,10 +65,9 @@ protected:
 
 private:
     static constexpr std::string_view PAYLOAD_CHARACTERS_ = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    static constexpr int MAX_CUR_IDX_MULTIPLIER_ = 10;
 
     int payload_size_;
-    std::vector<int> pre_generated_indices_;
+    std::string pre_generated_payload_;
     int cur_idx_;
 
     void init_(int pre_indices_size);
@@ -123,10 +121,9 @@ protected:
 
 private:
     static constexpr std::string_view PAYLOAD_CHARACTERS_ = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    static constexpr int MAX_CUR_IDX_MULTIPLIER_ = 10;
 
     int payload_size_;
-    std::vector<int> pre_generated_indices_;
+    std::string pre_generated_payload_;
     int cur_idx_;
 
     void init_(int pre_indices_size);
