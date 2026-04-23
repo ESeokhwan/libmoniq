@@ -3,7 +3,7 @@
 
 #include <chrono>
 #include <random>
-#include <sstream>
+#include <string>
 
 using json = nlohmann::json;
 
@@ -11,30 +11,69 @@ namespace moniq {
 namespace adaptor {
 
 std::string JsonBasedLatencyMonitoringMessageAdaptor::generate(std::string messageId) {
+    return generate(messageId, std::map<std::string, std::string>());
+}
+
+std::string JsonBasedLatencyMonitoringMessageAdaptor::generate(std::string messageId, std::map<std::string, std::string> oth_kvs) {
+    std::string payload = get_random_payload();
     auto now = std::chrono::system_clock::now();
-    int64_t millisec = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count();
-    return generate(messageId, millisec);
+    int64_t requested_at_ms = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count();
+
+    std::string json_str = "{\"";
+    json_str += ID_KEY_;
+    json_str += "\":\"";
+    json_str += messageId;
+    json_str += "\",\"";
+    json_str += REQUESTED_AT_KEY;
+    json_str += "\":\"";
+    json_str += std::to_string(requested_at_ms);
+    json_str += "\",\"";
+    json_str += PAYLOAD_KEY_;
+    json_str += "\":\"";
+    json_str += payload;
+    json_str += "\"";
+
+    for (const auto& [key, value] : oth_kvs) {
+        json_str += ",\"";
+        json_str += key;
+        json_str += "\":\"";
+        json_str += value;
+        json_str += "\"";
+    }
+    json_str += "}";
+    return json_str;
 }
 
 std::string JsonBasedLatencyMonitoringMessageAdaptor::generate(std::string messageId, int64_t requested_at) {
-    json messageJson = {
-        {ID_KEY_, messageId},
-        {REQUESTED_AT_KEY, requested_at},
-        {PAYLOAD_KEY_, get_random_payload()}
-    };
-    return messageJson.dump();
+    return generate(messageId, requested_at, std::map<std::string, std::string>());
 }
 
 std::string JsonBasedLatencyMonitoringMessageAdaptor::generate(std::string messageId, int64_t requested_at, std::map<std::string, std::string> oth_kvs) {
-    json messageJson = {
-        {ID_KEY_, messageId},
-        {REQUESTED_AT_KEY, requested_at},
-        {PAYLOAD_KEY_, get_random_payload()}
-    };
+    std::string payload = get_random_payload();
+
+    std::string json_str = "{\"";
+    json_str += ID_KEY_;
+    json_str += "\":\"";
+    json_str += messageId;
+    json_str += "\",\"";
+    json_str += REQUESTED_AT_KEY;
+    json_str += "\":\"";
+    json_str += std::to_string(requested_at);
+    json_str += "\",\"";
+    json_str += PAYLOAD_KEY_;
+    json_str += "\":\"";
+    json_str += payload;
+    json_str += "\"";
+
     for (const auto& [key, value] : oth_kvs) {
-        messageJson[key] = value;
+        json_str += ",\"";
+        json_str += key;
+        json_str += "\":\"";
+        json_str += value;
+        json_str += "\"";
     }
-    return messageJson.dump();
+    json_str += "}";
+    return json_str;
 }
 
 std::string JsonBasedLatencyMonitoringMessageAdaptor::extract_content(const std::string& message) const {
@@ -80,50 +119,80 @@ void JsonBasedLatencyMonitoringMessageGenerator::init_(int pre_indices_size) {
     std::mt19937 gen(rd());
     std::uniform_int_distribution<> dist(0, static_cast<int>(PAYLOAD_CHARACTERS_.size()) - 1);
 
-    pre_generated_indices_.resize(pre_indices_size);
-    cur_idx_ = 0;
-    for (int& idx : pre_generated_indices_) {
-        idx = dist(gen);
+    int total_pool_size = std::max(pre_indices_size, payload_size_);
+    pre_generated_payload_.reserve(total_pool_size);
+    for (int i = 0; i < total_pool_size; ++i) {
+        pre_generated_payload_ += PAYLOAD_CHARACTERS_[dist(gen)];
     }
 }
 
 std::string JsonBasedLatencyMonitoringMessageGenerator::get_random_payload() {
-    std::ostringstream payload;
-    for (int i = 0; i < payload_size_; i++) {
-        int pre_generated_size = static_cast<int>(pre_generated_indices_.size());
-        if (cur_idx_ >= pre_generated_size * MAX_CUR_IDX_MULTIPLIER_) {
-            cur_idx_ = 0;
-        }
-        char random_char = PAYLOAD_CHARACTERS_[pre_generated_indices_[cur_idx_ % pre_generated_size]];
-        payload << random_char;
-        cur_idx_ += 1;
+    int pool_size = static_cast<int>(pre_generated_payload_.size()) - payload_size_;
+    if (cur_idx_ >= pool_size) {
+        cur_idx_ = 0;
     }
-    return payload.str();
+    std::string result = pre_generated_payload_.substr(cur_idx_, payload_size_);
+    cur_idx_++;
+    return result;
 }
 
 std::string FastJsonBasedLatencyMonitoringMessageAdaptor::generate(std::string messageId) {
+    return generate(messageId, std::map<std::string, std::string>());
+}
+
+std::string FastJsonBasedLatencyMonitoringMessageAdaptor::generate(std::string messageId, std::map<std::string, std::string> oth_kvs) {
+    std::string payload = get_random_payload();
+
     auto now = std::chrono::system_clock::now();
-    int64_t millisec = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count();
-    return generate(messageId, millisec);
+    int64_t requested_at_ms = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count();
+
+    std::string json_str = "{\"";
+    json_str += ID_KEY_;
+    json_str += "\":\"";
+    json_str += messageId;
+    json_str += "\",\"";
+    json_str += REQUESTED_AT_KEY;
+    json_str += "\":\"";
+    json_str += std::to_string(requested_at_ms);
+    json_str += "\"";
+
+    for (const auto& [key, value] : oth_kvs) {
+        json_str += ",\"";
+        json_str += key;
+        json_str += "\":\"";
+        json_str += value;
+        json_str += "\"";
+    }
+    json_str += "}";
+    return json_str + DIV_CHAR + payload;
 }
 
 std::string FastJsonBasedLatencyMonitoringMessageAdaptor::generate(std::string messageId, int64_t requested_at) {
-    json messageJson = {
-        {ID_KEY_, messageId},
-        {REQUESTED_AT_KEY, requested_at}
-    };
-    return messageJson.dump() + DIV_CHAR + get_random_payload();
+    return generate(messageId, requested_at, std::map<std::string, std::string>());
 }
 
 std::string FastJsonBasedLatencyMonitoringMessageAdaptor::generate(std::string messageId, int64_t requested_at, std::map<std::string, std::string> oth_kvs) {
-    json messageJson = {
-        {ID_KEY_, messageId},
-        {REQUESTED_AT_KEY, requested_at}
-    };
+    std::string payload = get_random_payload();
+
+    std::string json_str = "{\"";
+    json_str += ID_KEY_;
+    json_str += "\":\"";
+    json_str += messageId;
+    json_str += "\",\"";
+    json_str += REQUESTED_AT_KEY;
+    json_str += "\":\"";
+    json_str += std::to_string(requested_at);
+    json_str += "\"";
+
     for (const auto& [key, value] : oth_kvs) {
-        messageJson[key] = value;
+        json_str += ",\"";
+        json_str += key;
+        json_str += "\":\"";
+        json_str += value;
+        json_str += "\"";
     }
-    return messageJson.dump() + DIV_CHAR + get_random_payload();
+    json_str += "}";
+    return json_str + DIV_CHAR + payload;
 }
 
 std::string FastJsonBasedLatencyMonitoringMessageAdaptor::extract_content(const std::string& message) const {
@@ -183,25 +252,21 @@ void FastJsonBasedLatencyMonitoringMessageGenerator::init_(int pre_indices_size)
     std::mt19937 gen(rd());
     std::uniform_int_distribution<> dist(0, static_cast<int>(PAYLOAD_CHARACTERS_.size()) - 1);
 
-    pre_generated_indices_.resize(pre_indices_size);
-    cur_idx_ = 0;
-    for (int& idx : pre_generated_indices_) {
-        idx = dist(gen);
+    int total_pool_size = std::max(pre_indices_size, payload_size_);
+    pre_generated_payload_.reserve(total_pool_size);
+    for (int i = 0; i < total_pool_size; ++i) {
+        pre_generated_payload_ += PAYLOAD_CHARACTERS_[dist(gen)];
     }
 }
 
 std::string FastJsonBasedLatencyMonitoringMessageGenerator::get_random_payload() {
-    std::ostringstream payload;
-    for (int i = 0; i < payload_size_; i++) {
-        int pre_generated_size = static_cast<int>(pre_generated_indices_.size());
-        if (cur_idx_ >= pre_generated_size * MAX_CUR_IDX_MULTIPLIER_) {
-            cur_idx_ = 0;
-        }
-        char random_char = PAYLOAD_CHARACTERS_[pre_generated_indices_[cur_idx_ % pre_generated_size]];
-        payload << random_char;
-        cur_idx_ += 1;
+    int pool_size = static_cast<int>(pre_generated_payload_.size()) - payload_size_;
+    if (cur_idx_ >= pool_size) {
+        cur_idx_ = 0;
     }
-    return payload.str();
+    std::string result = pre_generated_payload_.substr(cur_idx_, payload_size_);
+    cur_idx_++;
+    return result;
 }
 
 }

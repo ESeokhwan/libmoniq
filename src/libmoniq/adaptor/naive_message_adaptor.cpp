@@ -1,7 +1,6 @@
 #include "libmoniq/adaptor/naive_message_adaptor.h"
 
 #include <random>
-#include <sstream>
 
 namespace moniq {
 namespace adaptor {
@@ -29,26 +28,22 @@ void NaiveMessageGenerator::init_(int pre_indices_size) {
     std::mt19937 gen(rd());
     std::uniform_int_distribution<> dist(0, static_cast<int>(PADDING_CHARACTERS_.size()) - 1);
 
-    pre_generated_indices_.resize(pre_indices_size);
-    cur_idx_ = 0;
-    for (int& idx : pre_generated_indices_) {
-        idx = dist(gen);
+    int total_pool_size = std::max(pre_indices_size, message_size_);
+    pre_generated_payload_.reserve(total_pool_size);
+    for (int i = 0; i < total_pool_size; ++i) {
+        pre_generated_payload_ += PADDING_CHARACTERS_[dist(gen)];
     }
 }
 
 std::string NaiveMessageGenerator::get_random_padding_(std::string content) {
     int padding_size = message_size_ - static_cast<int>(content.length()) - 1;
-    std::ostringstream padded_string;
-    for (int i = 0; i < padding_size; i++) {
-        int pre_generated_size = static_cast<int>(pre_generated_indices_.size());
-        if (cur_idx_ >= pre_generated_size * MAX_CUR_IDX_MULTIPLIER_) {
-            cur_idx_ = 0;
-        }
-        char random_char = PADDING_CHARACTERS_[pre_generated_indices_[cur_idx_ % pre_generated_size]];
-        padded_string << random_char;
-        cur_idx_ += 1;
+    int pool_size = static_cast<int>(pre_generated_payload_.size()) - padding_size;
+    if (cur_idx_ >= pool_size) {
+        cur_idx_ = 0;
     }
-    return padded_string.str();
+    std::string result = pre_generated_payload_.substr(cur_idx_, padding_size);
+    cur_idx_++;
+    return result;
 }
 
 }

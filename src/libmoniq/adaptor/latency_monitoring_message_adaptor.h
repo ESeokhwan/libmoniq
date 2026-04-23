@@ -3,7 +3,6 @@
 #include "libmoniq/exception/common_exceptions.h"
 #include "libmoniq/adaptor/message_adaptor.h"
 
-#include <vector>
 #include <map>
 
 namespace moniq {
@@ -31,6 +30,8 @@ public:
     std::string generate(std::string message_id) override;
 
     std::string generate(std::string messageId, int64_t requested_at) override;
+
+    virtual std::string generate(std::string messageId, std::map<std::string, std::string> oth_kvs);
 
     virtual std::string generate(std::string messageId, int64_t requested_at, std::map<std::string, std::string> oth_kvs);
 
@@ -64,10 +65,9 @@ protected:
 
 private:
     static constexpr std::string_view PAYLOAD_CHARACTERS_ = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    static constexpr int MAX_CUR_IDX_MULTIPLIER_ = 10;
 
     int payload_size_;
-    std::vector<int> pre_generated_indices_;
+    std::string pre_generated_payload_;
     int cur_idx_;
 
     void init_(int pre_indices_size);
@@ -86,6 +86,8 @@ public:
     std::string generate(std::string message_id) override;
 
     std::string generate(std::string messageId, int64_t requested_at) override;
+
+    virtual std::string generate(std::string messageId, std::map<std::string, std::string> oth_kvs);
 
     virtual std::string generate(std::string messageId, int64_t requested_at, std::map<std::string, std::string> oth_kvs);
 
@@ -119,10 +121,9 @@ protected:
 
 private:
     static constexpr std::string_view PAYLOAD_CHARACTERS_ = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    static constexpr int MAX_CUR_IDX_MULTIPLIER_ = 10;
 
     int payload_size_;
-    std::vector<int> pre_generated_indices_;
+    std::string pre_generated_payload_;
     int cur_idx_;
 
     void init_(int pre_indices_size);
